@@ -196,14 +196,17 @@ Provides clear output:
 ### Making Changes
 
 1. **Modify Templates**
+
    - Edit files in `schematics/clean-module/files/`
    - Use EJS syntax for variables
 
 2. **Update Logic**
+
    - Edit `schematics/clean-module/index.ts`
    - Update option handling or file generation
 
 3. **Update Schema**
+
    - Edit `schematics/clean-module/schema.json`
    - Add new options or modify existing ones
 

@@ -84,7 +84,7 @@ For more information, visit: https://github.com/MatheusHiro/nestjs-clean-arch-sc
 }
 
 // Build the schematics command
-const schematicsCmd = `npx @angular-devkit/schematics-cli ${collectionPath}:clean-module --dry-run=false ${args.join(' ')}`;
+const schematicsCmd = `npx schematics ${collectionPath}:clean-module --dry-run=false ${args.join(' ')}`;
 
 try {
   // Execute the schematic
