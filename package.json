@@ -53,10 +53,10 @@
   },
   "dependencies": {
     "@angular-devkit/core": "^20.0.0",
-    "@angular-devkit/schematics": "^20.0.0"
+    "@angular-devkit/schematics": "^20.0.0",
+    "@angular-devkit/schematics-cli": "^20.0.0"
   },
   "devDependencies": {
-    "@angular-devkit/schematics-cli": "^20.0.0",
     "@types/node": "^22.0.0",
     "typescript": "^5.0.0"
   },
