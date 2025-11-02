@@ -1,17 +1,17 @@
 #!/usr/bin/env node
 
-const { execSync } = require('child_process');
-const path = require('path');
+const { execSync } = require("child_process");
+const path = require("path");
 
 // Get the directory where the package is installed
-const packageDir = path.resolve(__dirname, '..');
-const collectionPath = path.join(packageDir, 'dist', 'collection.json');
+const packageDir = path.resolve(__dirname, "..");
+const collectionPath = path.join(packageDir, "dist", "collection.json");
 
 // Get command line arguments (skip node and script path)
 const args = process.argv.slice(2);
 
 // Show help if no arguments or --help flag
-if (args.length === 0 || args.includes('--help') || args.includes('-h')) {
+if (args.length === 0 || args.includes("--help") || args.includes("-h")) {
   console.log(`
 ╭─────────────────────────────────────────────────────────────────────╮
 │                                                                     │
@@ -84,13 +84,21 @@ For more information, visit: https://github.com/MatheusHiro/nestjs-clean-arch-sc
 }
 
 // Build the schematics command
-const schematicsCmd = `npx schematics ${collectionPath}:clean-module --dry-run=false ${args.join(' ')}`;
+// Use the schematics binary from our node_modules
+const schematicsBin = path.join(
+  packageDir,
+  "node_modules",
+  ".bin",
+  "schematics"
+);
+const schematicsCmd = `"${schematicsBin}" ${collectionPath}:clean-module --dry-run=false ${args.join(
+  " "
+)}`;
 
 try {
   // Execute the schematic
-  execSync(schematicsCmd, { stdio: 'inherit', cwd: process.cwd() });
+  execSync(schematicsCmd, { stdio: "inherit", cwd: process.cwd() });
 } catch (error) {
-  console.error('Error executing schematic:', error.message);
+  console.error("Error executing schematic:", error.message);
   process.exit(1);
 }
-
