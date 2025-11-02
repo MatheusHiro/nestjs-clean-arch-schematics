@@ -1,6 +1,6 @@
 # 🏗️ NestJS Clean Architecture Schematics
 
-[![npm version](https://img.shields.io/npm/v/@nestjs-clean-arch/schematics.svg)](https://www.npmjs.com/package/@nestjs-clean-arch-schematics)
+[![npm version](https://img.shields.io/npm/v/@nestjs-clean-arch/schematics.svg)](https://www.npmjs.com/package/nestjs-clean-arch-schematics)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Node.js Version](https://img.shields.io/node/v/@nestjs-clean-arch/schematics.svg)](https://nodejs.org)
 
