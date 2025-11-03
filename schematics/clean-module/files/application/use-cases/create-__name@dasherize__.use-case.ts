@@ -3,10 +3,18 @@ import { <%= classify(name) %>Repository, <%= underscore(name).toUpperCase() %>_
 import { <%= classify(name) %> } from '../../domain/entities/<%= dasherize(name) %>.entity';
 import { Create<%= classify(name) %>Dto } from '../../presentation/dtos/create-<%= dasherize(name) %>.dto';
 import { <%= classify(name) %>Mapper } from '../mappers/<%= dasherize(name) %>.mapper';
+import { <%= classify(name) %>AlreadyExistsException, Invalid<%= classify(name) %>Exception } from '../../domain/exceptions/<%= dasherize(name) %>.exception';
 
 /**
  * Use Case: Create a new <%= classify(name) %>
- * Responsibility: Orchestrate the creation of a <%= camelize(name) %>, including validation and persistence
+ * 
+ * Responsibilities:
+ * - Validate business rules
+ * - Create domain entity
+ * - Map domain entity to ORM entity
+ * - Persist through repository
+ * - Map ORM entity back to domain entity
+ * - Throw domain exceptions when rules are violated
  */
 @Injectable()
 export class Create<%= classify(name) %>UseCase {
@@ -16,16 +24,35 @@ export class Create<%= classify(name) %>UseCase {
   ) {}
 
   async execute(dto: Create<%= classify(name) %>Dto): Promise<<%= classify(name) %>> {
-    // Map DTO to domain entity
-    const <%= camelize(name) %>Data = <%= classify(name) %>Mapper.createDtoToDomain(dto);
+    // TODO: Add business logic validation
+    // Example: Check if <%= camelize(name) %> already exists
+    // const exists = await this.repository.exists(someIdentifier);
+    // if (exists) {
+    //   throw new <%= classify(name) %>AlreadyExistsException(someIdentifier);
+    // }
 
-    // TODO: Add business logic validation here
-    // Example: await this.validateBusinessRules(<%= camelize(name) %>Data);
+    // Create domain entity (domain validation happens here)
+    let <%= camelize(name) %>Domain: <%= classify(name) %>;
+    try {
+      <%= camelize(name) %>Domain = <%= classify(name) %>.create({
+        // TODO: Map DTO to domain entity properties
+        // Example: name: dto.name,
+      });
+    } catch (error) {
+      // Re-throw domain exceptions
+      if (error instanceof Error) {
+        throw new Invalid<%= classify(name) %>Exception(error.message);
+      }
+      throw error;
+    }
 
-    // Persist through repository
-    const created<%= classify(name) %> = await this.repository.create(<%= camelize(name) %>Data);
+    // Map domain entity to ORM entity for persistence
+    const <%= camelize(name) %>Orm = <%= classify(name) %>Mapper.toOrm(<%= camelize(name) %>Domain);
 
-    return created<%= classify(name) %>;
+    // Persist through repository (works with ORM entities)
+    const created<%= classify(name) %>Orm = await this.repository.create(<%= camelize(name) %>Orm);
+
+    // Map ORM entity back to domain entity
+    return <%= classify(name) %>Mapper.toDomain(created<%= classify(name) %>Orm);
   }
 }
-

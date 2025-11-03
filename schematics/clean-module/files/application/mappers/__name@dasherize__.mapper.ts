@@ -1,35 +1,46 @@
 import { <%= classify(name) %> } from '../../domain/entities/<%= dasherize(name) %>.entity';
 import { <%= classify(name) %>OrmEntity } from '../../infrastructure/persistence/<%= dasherize(name) %>.orm-entity';
-import { Create<%= classify(name) %>Dto } from '../../presentation/dtos/create-<%= dasherize(name) %>.dto';
-import { Update<%= classify(name) %>Dto } from '../../presentation/dtos/update-<%= dasherize(name) %>.dto';
 
 /**
- * Mapper class responsible for converting between different entity representations
- * Following Clean Architecture principles: each layer has its own representation
+ * <%= classify(name) %> Mapper
+ * 
+ * Responsibilities:
+ * - Map between ORM entities (persistence) and Domain entities (business logic)
+ * - Used ONLY by use cases in the application layer
+ * - Repository does NOT use this mapper
+ * 
+ * Following Clean Architecture principles:
+ * - Repository works with ORM entities
+ * - Use cases translate ORM ↔ Domain using this mapper
+ * - Domain entities remain pure and framework-agnostic
  */
 export class <%= classify(name) %>Mapper {
   /**
    * Convert ORM Entity (persistence) to Domain Entity (business logic)
+   * Used when retrieving data from repository
    */
   static toDomain(ormEntity: <%= classify(name) %>OrmEntity): <%= classify(name) %> {
-    return new <%= classify(name) %>({
-      id: ormEntity.id,
-      createdAt: ormEntity.createdAt,
-      updatedAt: ormEntity.updatedAt,
-      // TODO: Map additional fields
-    });
+    // TODO: Map ORM entity fields to domain entity
+    return <%= classify(name) %>.create(
+      {
+        // TODO: Map your fields here
+        // Example: name: ormEntity.name,
+      },
+      ormEntity.id
+    );
   }
 
   /**
    * Convert Domain Entity to ORM Entity (for persistence)
+   * Used when saving data through repository
    */
-  static toOrm(domainEntity: <%= classify(name) %>): <%= classify(name) %>OrmEntity {
-    return new <%= classify(name) %>OrmEntity({
+  static toOrm(domainEntity: <%= classify(name) %>): Partial<<%= classify(name) %>OrmEntity> {
+    return {
       id: domainEntity.id,
-      createdAt: domainEntity.createdAt,
-      updatedAt: domainEntity.updatedAt,
-      // TODO: Map additional fields
-    });
+      // TODO: Map domain entity properties to ORM entity
+      // Example: name: domainEntity.name,
+      // Note: createdAt/updatedAt handled by repository
+    };
   }
 
   /**
@@ -40,25 +51,12 @@ export class <%= classify(name) %>Mapper {
   }
 
   /**
-   * Convert Create DTO to Domain Entity (for new entities)
+   * Create partial ORM entity from domain data (for updates)
    */
-  static createDtoToDomain(dto: Create<%= classify(name) %>Dto): Partial<<%= classify(name) %>> {
+  static toOrmPartial(data: Partial<{ /* TODO: Add domain fields */ }>): Partial<<%= classify(name) %>OrmEntity> {
     return {
-      // TODO: Map DTO fields to domain entity
-      // Example: name: dto.name,
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-  }
-
-  /**
-   * Convert Update DTO to partial Domain Entity
-   */
-  static updateDtoToDomain(dto: Update<%= classify(name) %>Dto): Partial<<%= classify(name) %>> {
-    return {
-      // TODO: Map DTO fields to domain entity
-      updatedAt: new Date(),
+      // TODO: Map partial domain data to ORM entity
+      // Example: ...(data.name && { name: data.name }),
     };
   }
 }
-

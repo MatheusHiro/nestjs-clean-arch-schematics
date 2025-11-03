@@ -185,6 +185,11 @@ export function cleanModule(options: CleanModuleOptions): Rule {
       if (options.skipEntity && (normalizedPath.includes('domain/entities/') || normalizedPath.includes('/domain/entities/'))) {
         return false;
       }
+
+      // Skip domain exceptions if entity is skipped (exceptions are domain-related)
+      if (options.skipEntity && (normalizedPath.includes('domain/exceptions/') || normalizedPath.includes('/domain/exceptions/'))) {
+        return false;
+      }
       
       // Skip gateway files
       if (options.skipGateway && (normalizedPath.includes('infrastructure/gateways/') || normalizedPath.includes('/infrastructure/gateways/'))) {

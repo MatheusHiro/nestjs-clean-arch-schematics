@@ -1,16 +1,18 @@
 import { Injectable } from '@nestjs/common';
 import { <%= classify(name) %>Repository } from '../../domain/interfaces/<%= dasherize(name) %>.repository.interface';
-import { <%= classify(name) %> } from '../../domain/entities/<%= dasherize(name) %>.entity';
 import { <%= classify(name) %>OrmEntity } from '../persistence/<%= dasherize(name) %>.orm-entity';
-import { <%= classify(name) %>Mapper } from '../../application/mappers/<%= dasherize(name) %>.mapper';
 
 /**
- * Repository Implementation
+ * <%= classify(name) %> Repository Implementation
+ * 
  * Responsibilities:
- * - Work with ORM entities (persistence layer)
- * - Map between ORM and Domain entities
+ * - Work ONLY with ORM entities (persistence layer)
+ * - Handle database operations
  * - Return null/empty arrays instead of throwing exceptions
- * - Handle data persistence operations
+ * - NO mapping to domain entities (that's the use case's job)
+ * - NO business logic (that's the domain's job)
+ * 
+ * Important: Repository does NOT know about domain entities or mappers
  */
 @Injectable()
 export class <%= classify(name) %>RepositoryImpl implements <%= classify(name) %>Repository {
@@ -26,81 +28,71 @@ export class <%= classify(name) %>RepositoryImpl implements <%= classify(name) %
 
   /**
    * Find all <%= camelize(name) %>s
-   * Returns empty array if none found (no exception)
+   * @returns Array of ORM entities (empty if none found, never throws)
    */
-  async findAll(): Promise<<%= classify(name) %>[]> {
+  async findAll(): Promise<<%= classify(name) %>OrmEntity[]> {
     // TODO: Replace with actual database query
-    // Example: const ormEntities = await this.ormRepository.find();
+    // Example: return await this.ormRepository.find();
     
-    const ormEntities = this.<%= camelize(name) %>OrmEntities;
-    return <%= classify(name) %>Mapper.toDomainList(ormEntities);
+    return [...this.<%= camelize(name) %>OrmEntities];
   }
 
   /**
    * Find <%= camelize(name) %> by ID
-   * Returns null if not found (no exception)
+   * @returns ORM entity or null if not found (never throws)
    */
-  async findById(id: string): Promise<<%= classify(name) %> | null> {
+  async findById(id: string): Promise<<%= classify(name) %>OrmEntity | null> {
     // TODO: Replace with actual database query
-    // Example: const ormEntity = await this.ormRepository.findOne({ where: { id } });
+    // Example: return await this.ormRepository.findOne({ where: { id } });
     
-    const ormEntity = this.<%= camelize(name) %>OrmEntities.find(e => e.id === id);
-    
-    if (!ormEntity) {
-      return null;
-    }
-
-    return <%= classify(name) %>Mapper.toDomain(ormEntity);
+    const entity = this.<%= camelize(name) %>OrmEntities.find(e => e.id === id);
+    return entity ?? null;
   }
 
   /**
    * Create a new <%= camelize(name) %>
+   * @returns Created ORM entity
    */
-  async create(data: Partial<<%= classify(name) %>>): Promise<<%= classify(name) %>> {
-    // Create ORM entity
-    const ormEntity = new <%= classify(name) %>OrmEntity({
-      id: Date.now().toString(), // TODO: Use proper ID generation (UUID, auto-increment, etc.)
+  async create(data: Partial<<%= classify(name) %>OrmEntity>): Promise<<%= classify(name) %>OrmEntity> {
+    // TODO: Replace with actual database operation
+    // Example: return await this.ormRepository.save(data);
+    
+    const entity = new <%= classify(name) %>OrmEntity({
       ...data,
+      id: Date.now().toString(), // TODO: Use proper ID generation (UUID, etc.)
       createdAt: new Date(),
       updatedAt: new Date(),
     });
-
-    // TODO: Replace with actual database save
-    // Example: const savedEntity = await this.ormRepository.save(ormEntity);
     
-    this.<%= camelize(name) %>OrmEntities.push(ormEntity);
-    
-    // Map ORM entity back to domain entity
-    return <%= classify(name) %>Mapper.toDomain(ormEntity);
+    this.<%= camelize(name) %>OrmEntities.push(entity);
+    return entity;
   }
 
   /**
    * Update an existing <%= camelize(name) %>
-   * Returns null if not found (no exception)
+   * @returns Updated ORM entity or null if not found (never throws)
    */
-  async update(id: string, data: Partial<<%= classify(name) %>>): Promise<<%= classify(name) %> | null> {
-    // TODO: Replace with actual database query
+  async update(id: string, data: Partial<<%= classify(name) %>OrmEntity>): Promise<<%= classify(name) %>OrmEntity | null> {
+    // TODO: Replace with actual database operation
     // Example:
     // await this.ormRepository.update(id, { ...data, updatedAt: new Date() });
-    // const updated = await this.ormRepository.findOne({ where: { id } });
+    // return await this.ormRepository.findOne({ where: { id } });
     
     const index = this.<%= camelize(name) %>OrmEntities.findIndex(e => e.id === id);
     
     if (index === -1) {
-      return null; // Not found, return null instead of throwing
+      return null; // Not found - return null, don't throw
     }
 
-    // Update the ORM entity
-    const updatedOrmEntity = new <%= classify(name) %>OrmEntity({
+    const updated = new <%= classify(name) %>OrmEntity({
       ...this.<%= camelize(name) %>OrmEntities[index],
       ...data,
+      id, // Preserve ID
       updatedAt: new Date(),
     });
     
-    this.<%= camelize(name) %>OrmEntities[index] = updatedOrmEntity;
-
-    // Map back to domain entity
-    return <%= classify(name) %>Mapper.toDomain(updatedOrmEntity);
+    this.<%= camelize(name) %>OrmEntities[index] = updated;
+    return updated;
   }
 
   /**
@@ -108,7 +100,7 @@ export class <%= classify(name) %>RepositoryImpl implements <%= classify(name) %
    * Silent operation - doesn't throw if not found
    */
   async delete(id: string): Promise<void> {
-    // TODO: Replace with actual database delete
+    // TODO: Replace with actual database operation
     // Example: await this.ormRepository.delete(id);
     
     const index = this.<%= camelize(name) %>OrmEntities.findIndex(e => e.id === id);
@@ -117,6 +109,16 @@ export class <%= classify(name) %>RepositoryImpl implements <%= classify(name) %
       this.<%= camelize(name) %>OrmEntities.splice(index, 1);
     }
     
-    // No exception thrown if not found - silent operation
+    // Silent operation - no exception if not found
+  }
+
+  /**
+   * Check if <%= camelize(name) %> exists
+   */
+  async exists(id: string): Promise<boolean> {
+    // TODO: Replace with actual database query
+    // Example: return await this.ormRepository.exist({ where: { id } });
+    
+    return this.<%= camelize(name) %>OrmEntities.some(e => e.id === id);
   }
 }

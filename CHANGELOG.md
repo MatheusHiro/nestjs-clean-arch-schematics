@@ -5,6 +5,48 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2025-11-02
+
+### Added
+- **Domain Exceptions**: Generated modules now include domain-specific exceptions
+  - `XDomainException`: Base domain exception class
+  - `XNotFoundException`: When entity is not found
+  - `XAlreadyExistsException`: When attempting to create duplicate
+  - `InvalidXException`: When entity data is invalid
+
+### Changed
+- **BREAKING**: Repository interface now works with ORM entities, not domain entities
+  - Repository methods accept/return `XOrmEntity` instead of domain `X`
+  - Use cases handle mapping between ORM and domain entities
+  - Follows proper Clean Architecture separation of concerns
+
+- **Domain Entity**: Now extends `BaseEntity` from core module
+  - Uses private constructor with factory method pattern
+  - Pure domain logic without persistence concerns
+  - Framework-agnostic
+
+- **Use Cases**: Properly handle mapping and throw domain exceptions
+  - Map ORM entities to domain entities using mapper
+  - Throw domain exceptions when business rules violated
+  - Repository interaction only with ORM entities
+
+- **Controller**: Simplified, no exception handling
+  - Controllers only throw domain exceptions
+  - Exception translation should be handled by global filter/interceptor in shared module
+  - Prevents coupling between layers
+
+- **Mapper**: Focused on ORM ↔ Domain translation
+  - Used exclusively by use cases
+  - Repository never uses mapper
+  - Clear separation of responsibilities
+
+### Improved
+- **Layer Independence**: Each layer throws appropriate exceptions
+  - Domain layer: Domain exceptions
+  - Use cases: Validate and throw domain exceptions
+  - Repository: Never throws (returns null/empty)
+  - Controller: Pass through (handled by global interceptor)
+
 ## [1.1.0] - 2025-11-02
 
 ### Added

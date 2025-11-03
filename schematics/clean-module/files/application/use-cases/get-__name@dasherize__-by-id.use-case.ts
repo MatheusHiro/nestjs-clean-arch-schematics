@@ -1,10 +1,16 @@
-import { Injectable, Inject, NotFoundException } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { <%= classify(name) %>Repository, <%= underscore(name).toUpperCase() %>_REPOSITORY_TOKEN } from '../../domain/interfaces/<%= dasherize(name) %>.repository.interface';
 import { <%= classify(name) %> } from '../../domain/entities/<%= dasherize(name) %>.entity';
+import { <%= classify(name) %>Mapper } from '../mappers/<%= dasherize(name) %>.mapper';
+import { <%= classify(name) %>NotFoundException } from '../../domain/exceptions/<%= dasherize(name) %>.exception';
 
 /**
  * Use Case: Get <%= classify(name) %> by ID
- * Responsibility: Retrieve a specific <%= camelize(name) %> and handle not found cases
+ * 
+ * Responsibilities:
+ * - Retrieve ORM entity from repository
+ * - Throw domain exception if not found
+ * - Map ORM entity to domain entity
  */
 @Injectable()
 export class Get<%= classify(name) %>ByIdUseCase {
@@ -14,13 +20,15 @@ export class Get<%= classify(name) %>ByIdUseCase {
   ) {}
 
   async execute(id: string): Promise<<%= classify(name) %>> {
-    const <%= camelize(name) %> = await this.repository.findById(id);
+    // Get ORM entity from repository (returns null if not found)
+    const <%= camelize(name) %>Orm = await this.repository.findById(id);
     
-    if (!<%= camelize(name) %>) {
-      throw new NotFoundException(`<%= classify(name) %> with ID ${id} not found`);
+    // Throw domain exception if not found
+    if (!<%= camelize(name) %>Orm) {
+      throw new <%= classify(name) %>NotFoundException(id);
     }
 
-    return <%= camelize(name) %>;
+    // Map ORM entity to domain entity
+    return <%= classify(name) %>Mapper.toDomain(<%= camelize(name) %>Orm);
   }
 }
-

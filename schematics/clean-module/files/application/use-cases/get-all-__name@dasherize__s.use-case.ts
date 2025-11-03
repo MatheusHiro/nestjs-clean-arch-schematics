@@ -1,10 +1,14 @@
 import { Injectable, Inject } from '@nestjs/common';
 import { <%= classify(name) %>Repository, <%= underscore(name).toUpperCase() %>_REPOSITORY_TOKEN } from '../../domain/interfaces/<%= dasherize(name) %>.repository.interface';
 import { <%= classify(name) %> } from '../../domain/entities/<%= dasherize(name) %>.entity';
+import { <%= classify(name) %>Mapper } from '../mappers/<%= dasherize(name) %>.mapper';
 
 /**
  * Use Case: Get all <%= classify(name) %>s
- * Responsibility: Retrieve all <%= camelize(name) %>s from the repository
+ * 
+ * Responsibilities:
+ * - Retrieve ORM entities from repository
+ * - Map ORM entities to domain entities
  */
 @Injectable()
 export class GetAll<%= classify(name) %>sUseCase {
@@ -14,7 +18,10 @@ export class GetAll<%= classify(name) %>sUseCase {
   ) {}
 
   async execute(): Promise<<%= classify(name) %>[]> {
-    return this.repository.findAll();
+    // Get ORM entities from repository
+    const <%= camelize(name) %>OrmList = await this.repository.findAll();
+
+    // Map ORM entities to domain entities
+    return <%= classify(name) %>Mapper.toDomainList(<%= camelize(name) %>OrmList);
   }
 }
-

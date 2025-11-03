@@ -42,7 +42,7 @@ export class <%= classify(name) %>Service {
   async findById(id: string): Promise<<%= classify(name) %>> {
     // TODO: Add cross-cutting concerns (logging, caching, etc.)
     return this.get<%= classify(name) %>ByIdUseCase.execute(id);
-  }
+    }
 
   /**
    * Create a new <%= camelize(name) %>
