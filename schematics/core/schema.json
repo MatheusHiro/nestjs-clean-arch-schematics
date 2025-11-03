@@ -1,0 +1,21 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "$id": "NestJSCleanArchCoreSchema",
+  "title": "NestJS Clean Architecture Core Module Options Schema",
+  "type": "object",
+  "properties": {
+    "path": {
+      "type": "string",
+      "description": "The path where the core module will be generated",
+      "default": "src/core"
+    },
+    "help": {
+      "type": "boolean",
+      "description": "Show help message",
+      "default": false,
+      "alias": "h"
+    }
+  },
+  "required": []
+}
+

@@ -5,6 +5,11 @@
       "description": "Generate a Clean Architecture module with presentation, domain, application, and infrastructure layers",
       "factory": "./clean-module/index#cleanModule",
       "schema": "./clean-module/schema.json"
+    },
+    "core": {
+      "description": "Generate a core module with strongly-typed base classes for Clean Architecture and DDD",
+      "factory": "./core/index#core",
+      "schema": "./core/schema.json"
     }
   }
 }

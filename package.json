@@ -42,8 +42,8 @@
     "clean": "rm -rf dist",
     "compile": "tsc -p tsconfig.json",
     "copy:assets": "npm run copy:schemas && npm run copy:templates",
-    "copy:schemas": "cp schematics/collection.json dist/ && cp schematics/clean-module/schema.json dist/clean-module/",
-    "copy:templates": "cp -r schematics/clean-module/files dist/clean-module/",
+    "copy:schemas": "cp schematics/collection.json dist/ && cp schematics/clean-module/schema.json dist/clean-module/ && mkdir -p dist/core && cp schematics/core/schema.json dist/core/",
+    "copy:templates": "cp -r schematics/clean-module/files dist/clean-module/ && cp -r schematics/core/files dist/core/",
     "prepublishOnly": "npm run build",
     "test": "echo \"No tests yet\" && exit 0"
   },

@@ -20,11 +20,15 @@ if (args.length === 0 || args.includes("--help") || args.includes("-h")) {
 ╰─────────────────────────────────────────────────────────────────────╯
 
 USAGE:
-  nestjs-clean <name> [options]
-  npx nestjs-clean-arch-schematics <name> [options]
+  nestjs-clean <command|name> [options]
+  npx nestjs-clean-arch-schematics <command|name> [options]
+
+COMMANDS:
+  core            Generate core module with base classes for Clean Architecture
+  <name>          Generate a Clean Architecture module (default command)
 
 ARGUMENTS:
-  <name>          The name of the module (required)
+  <name>          The name of the module (required for module generation)
 
 OPTIONS:
   --path=<path>                Path where the module will be generated
@@ -47,6 +51,9 @@ OTHER OPTIONS:
   --help, -h                   Show this help message
 
 EXAMPLES:
+  # Generate core module with base classes
+  nestjs-clean core
+
   # Generate a complete user module
   nestjs-clean user
 
@@ -62,6 +69,7 @@ EXAMPLES:
 
   # Custom path
   nestjs-clean payment --path=src/features
+  nestjs-clean core --path=src/shared/core
 
 GENERATED STRUCTURE:
   src/modules/<name>/
@@ -83,6 +91,11 @@ For more information, visit: https://github.com/MatheusHiro/nestjs-clean-arch-sc
   process.exit(0);
 }
 
+// Determine which schematic to run
+const firstArg = args[0];
+const schematic = firstArg === "core" ? "core" : "clean-module";
+const schematicArgs = firstArg === "core" ? args.slice(1) : args;
+
 // Build the schematics command
 // Use the schematics binary from our node_modules
 const schematicsBin = path.join(
@@ -91,7 +104,7 @@ const schematicsBin = path.join(
   ".bin",
   "schematics"
 );
-const schematicsCmd = `"${schematicsBin}" ${collectionPath}:clean-module --dry-run=false ${args.join(
+const schematicsCmd = `"${schematicsBin}" ${collectionPath}:${schematic} --dry-run=false ${schematicArgs.join(
   " "
 )}`;
 
